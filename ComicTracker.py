@@ -164,6 +164,7 @@ class ComicTracker(Frame):
             self.AddComicTPL = Toplevel(self)
             self.AddComicTPL.title('Input Comic SN')
             self.AddComicTPL.bind('<Return>', lambda(_): self.add_comic(self.AddComicStr.get()))
+            self.AddComicStr.set('')
             self.AddComicEntry = Entry(self.AddComicTPL, textvariable=self.AddComicStr, width=5)
             self.AddComicEntry.pack()
             self.AddComicEntry.focus_set()
