@@ -1,0 +1,5 @@
+.idea/
+dist/
+build/
+setup.py
+comic.db
