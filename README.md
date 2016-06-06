@@ -17,11 +17,11 @@ For educational purposes only.
 	python ComicTracker.py
 
 - 'Add': Input the comic id on www.8comic.com (e.g. http://www.comicbus.com/html/103.html, 103 is the comic id).
-- 'Delete': Delete the selected comic item in the list.
+- 'Delete': Delete the selected comic item on the list.
 - '^': Move up the selected comic item.
 - 'v': Move Down the selected comic item.
 - 'Current EP': Reader's current progress.
-- 'Open in browser': Open the comic main page in default browser. Can also be done by double-clicking the items in the list.
+- 'Open in browser': Open the comic main page in default browser. Can also be done by double-clicking the items on the list.
 - 'Keep up automatically': If selected, the 'Current EP' will synchroize with 'Latest EP' automatically.
 - 'Update Frequency': The frequency of automatically update in hours.
 - 'Save': Save the settings and the comic data into 'comic.db'.
