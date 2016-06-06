@@ -34,11 +34,12 @@ class ComicTracker(Frame):
         self.SNCaptionLabel.grid(row=1, column=4, sticky=NW)
         self.SNValueLabel.grid(row=1, column=5, sticky=NW)
         self.NameCaptionLabel.grid(row=2, column=4, sticky=NW)
-        self.NameValueLabel.grid(row=2, column=5, sticky=NE)
+        self.NameValueLabel.grid(row=2, column=5, sticky=NW)
         self.LatestEPCaptionLabel.grid(row=3, column=4, sticky=NW)
         self.LatestEPValueLabel.grid(row=3, column=5, sticky=NW)
         self.CurrEPCaptionLabel.grid(row=4, column=4, sticky=NW)
         self.CurrEPEntry.grid(row=4, column=5, sticky=NW)
+        self.CurrEPStr.trace('w', self.change_curr_ep)
         self.KeepUpCbx.grid(row=5, column=4, sticky=NW, columnspan=2)
         self.OpenPageBtn.grid(row=6, column=4, sticky=NW, columnspan=2)
 
@@ -60,6 +61,7 @@ class ComicTracker(Frame):
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
+        master.protocol('WM_DELETE_WINDOW', self.save_and_quit)
         self.pack()
 
         self.AddBtn = Button(self, text='Add', width=5, command=self.click_add_comic)
@@ -69,7 +71,7 @@ class ComicTracker(Frame):
 
         self.ComicList = Listbox(self, width=25)
 
-        self.SNCaptionLabel = Label(self, text='SN: ')
+        self.SNCaptionLabel = Label(self, text='ID: ')
         self.SNValueLabel = Label(self, text='')
         self.NameCaptionLabel = Label(self, text='Name: ')
         self.NameValueLabel = Label(self, text='', width=20)
@@ -79,7 +81,7 @@ class ComicTracker(Frame):
         self.CurrEPStr = StringVar()
         self.CurrEPEntry = Entry(self, textvariable=self.CurrEPStr, width=5)
         self.KeepUpCbx = Checkbutton(self, text='Keep up automatically', command=self.keep_up_button)
-        self.OpenPageBtn = Button(self, text='Open in Browser', command=self.open_page)
+        self.OpenPageBtn = Button(self, text='Open in browser', command=self.open_page)
 
         self.UpdateFreqLabel = Label(self, text='Update Frequency(hrs):')
         self.UpdateFreqStr = StringVar()
@@ -161,8 +163,10 @@ class ComicTracker(Frame):
         if self.AddComicTPL is None:
             self.AddComicTPL = Toplevel(self)
             self.AddComicTPL.title('Input Comic SN')
+            self.AddComicTPL.bind('<Return>', lambda(_): self.add_comic(self.AddComicStr.get()))
             self.AddComicEntry = Entry(self.AddComicTPL, textvariable=self.AddComicStr, width=5)
             self.AddComicEntry.pack()
+            self.AddComicEntry.focus_set()
             self.AddComicOKBtn = Button(self.AddComicTPL, text='OK', command=lambda: self.add_comic(self.AddComicStr.get()))
             self.AddComicOKBtn.pack()
 
@@ -180,10 +184,10 @@ class ComicTracker(Frame):
             comic_data = [serial_number, comic_name, comic_episode, comic_episode, self.KEEP_UP_SELECTED, self.COMIC_NEW]
             if self.current_index == -1:
                 self.comic_db.append(comic_data)
+                self.ComicList.insert(END, '+' + comic_name.decode('big5'))
             else:
                 self.comic_db.insert(self.current_index, comic_data)
-
-            self.ComicList.insert(END, '+' + comic_name.decode('big5'))
+                self.ComicList.insert(self.current_index, '+' + comic_name.decode('big5'))
         except:
             pass
 
@@ -226,8 +230,15 @@ class ComicTracker(Frame):
         self.ComicList.insert(self.current_index + 1, text)
         self.ComicList.select_set(self.current_index + 1)
 
-    def change_update_frequency(self, _):
+    def change_update_frequency(self, *args):
         self.update_frequency = self.UpdateFreqStr.get()
+
+    def change_curr_ep(self, *args):
+        if self.current_index == -1:
+            return
+
+        data = self.comic_db[self.current_index]
+        data[self.INDEX_CURR_EP] = self.CurrEPStr.get()
 
     def open_page(self):
         if self.current_index == -1:
@@ -258,10 +269,14 @@ class ComicTracker(Frame):
         if self.current_index == -1:
             return
 
-        if bool(self.comic_db[self.current_index][-2]):
-            self.comic_db[self.current_index][-2] = self.KEEP_UP_DESELECTED
+        data = self.comic_db[self.current_index]
+        if bool(data[self.INDEX_KEEP_UP]):
+            data[self.INDEX_KEEP_UP] = self.KEEP_UP_DESELECTED
         else:
-            self.comic_db[self.current_index][-2] = self.KEEP_UP_SELECTED
+            data[self.INDEX_KEEP_UP] = self.KEEP_UP_SELECTED
+
+            data[self.INDEX_CURR_EP] = data[self.INDEX_LATEST_EP]
+            self.CurrEPStr.set(data[self.INDEX_CURR_EP])
 
     def save_and_quit(self):
         self.update_timer.cancel()
