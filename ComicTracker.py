@@ -218,6 +218,7 @@ class ComicTracker(Frame):
         self.ComicList.delete(self.current_index)
         self.ComicList.insert(self.current_index - 1, text)
         self.ComicList.select_set(self.current_index - 1)
+        self.current_index -= 1
 
     def move_comic_down(self):
         if self.current_index >= len(self.comic_db) - 1:
@@ -230,6 +231,7 @@ class ComicTracker(Frame):
         self.ComicList.delete(self.current_index)
         self.ComicList.insert(self.current_index + 1, text)
         self.ComicList.select_set(self.current_index + 1)
+        self.current_index += 1
 
     def change_update_frequency(self, *args):
         self.update_frequency = self.UpdateFreqStr.get()
