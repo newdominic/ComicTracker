@@ -4,9 +4,6 @@ import webbrowser
 from Tkinter import *
 import threading
 
-# To-do
-# timer
-
 
 class ComicTracker(Frame):
     INDEX_SN=0
@@ -180,7 +177,7 @@ class ComicTracker(Frame):
 
             r = requests.get(self.url % serial_number)
             r.encoding = 'big5'
-            comic_name = r.text.split('FF6600')[1].split('>')[1].split('<')[0]
+            comic_name = r.text.split('FF6600')[1].split('>')[1].split('<')[0].encode('big5')
             comic_episode = r.text.split('#Comic')[1].split('</b>')[0].split('<b>')[1].split('-')[1].encode('ascii')
             comic_data = [serial_number, comic_name, comic_episode, comic_episode, self.KEEP_UP_SELECTED, self.COMIC_NEW]
             if self.current_index == -1:
