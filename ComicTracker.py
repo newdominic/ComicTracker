@@ -289,5 +289,6 @@ CT = ComicTracker(root)
 
 CT.load_database()
 CT.init_ui()
+CT.update_comic_btn()
 
 CT.mainloop()
