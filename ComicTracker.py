@@ -285,6 +285,7 @@ class ComicTracker(Frame):
 
 root = Tk()
 root.title('Comic Tracker')
+root.iconify()
 CT = ComicTracker(root)
 
 CT.load_database()
